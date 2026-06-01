@@ -1,13 +1,6 @@
-import { Card, CardActionArea, CardContent, Chip, Stack, Typography, Box, Skeleton } from '@mui/material';
+import { Card, CardActionArea, CardContent, Stack, Typography, Box, Skeleton } from '@mui/material';
 import { useTopPending } from '../../hooks/useServiceRequests';
 import { useSelection } from '../../context/SelectionContext';
-import type { RequestStatus } from '../../types';
-
-const statusColor: Record<RequestStatus, 'warning' | 'info' | 'success'> = {
-  Open: 'warning',
-  InProgress: 'info',
-  Completed: 'success',
-};
 
 export function TopRequestsWidget() {
   const { data = [], isLoading, isError } = useTopPending();
@@ -36,12 +29,9 @@ export function TopRequestsWidget() {
                     <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>
                       {req.title}
                     </Typography>
-                    <Stack direction="row" spacing={1} sx={{ mt: 0.5, alignItems: 'center' }}>
-                      <Chip label={req.status} color={statusColor[req.status]} size="small" />
-                      <Typography variant="caption" color="text.secondary">
-                        {req.requesterName} → {req.requesteeName}
-                      </Typography>
-                    </Stack>
+                    <Typography variant="caption" color="text.secondary">
+                      {req.requesterName} → {req.requesteeName}
+                    </Typography>
                   </CardContent>
                 </CardActionArea>
               </Card>

@@ -1,41 +1,12 @@
 import { DataGrid, type GridColDef, type GridRowParams, type GridRowSelectionModel } from '@mui/x-data-grid';
-import { Chip, Paper, Typography, Box } from '@mui/material';
+import { Paper, Typography, Box } from '@mui/material';
 import { useServiceRequests } from '../../hooks/useServiceRequests';
 import { useSelection } from '../../context/SelectionContext';
-import type { Priority, RequestStatus } from '../../types';
-
-const statusColor: Record<RequestStatus, 'warning' | 'info' | 'success'> = {
-  Open: 'warning',
-  InProgress: 'info',
-  Completed: 'success',
-};
-
-const priorityColor: Record<Priority, 'default' | 'primary' | 'error'> = {
-  Low: 'default',
-  Medium: 'primary',
-  High: 'error',
-};
 
 const columns: GridColDef[] = [
   { field: 'title', headerName: 'Title', flex: 2, minWidth: 200 },
   { field: 'requesterName', headerName: 'Requester', flex: 1, minWidth: 130 },
   { field: 'requesteeName', headerName: 'Requestee', flex: 1, minWidth: 130 },
-  {
-    field: 'status',
-    headerName: 'Status',
-    width: 130,
-    renderCell: ({ value }) => (
-      <Chip label={value} color={statusColor[value as RequestStatus]} size="small" />
-    ),
-  },
-  {
-    field: 'priority',
-    headerName: 'Priority',
-    width: 110,
-    renderCell: ({ value }) => (
-      <Chip label={value} color={priorityColor[value as Priority]} size="small" variant="outlined" />
-    ),
-  },
   {
     field: 'createdAt',
     headerName: 'Created',
