@@ -25,9 +25,9 @@ const sampleRequest = {
 };
 
 beforeEach(() => {
-  // Default: no selection, no loading
+  // Default: no selection, no loading, no error
   mockUseSelection.mockReturnValue({ selectedId: null });
-  mockUseServiceRequest.mockReturnValue({ data: null, isLoading: false });
+  mockUseServiceRequest.mockReturnValue({ data: null, isLoading: false, isError: false });
 });
 
 describe('NotesWidget', () => {
@@ -38,9 +38,16 @@ describe('NotesWidget', () => {
 
   it('shows "Loading..." when selectedId is set and isLoading is true', () => {
     mockUseSelection.mockReturnValue({ selectedId: 'req-1' });
-    mockUseServiceRequest.mockReturnValue({ data: null, isLoading: true });
+    mockUseServiceRequest.mockReturnValue({ data: null, isLoading: true, isError: false });
     render(<NotesWidget />);
     expect(screen.getByText('Loading...')).toBeInTheDocument();
+  });
+
+  it('shows error message when the request fails to load', () => {
+    mockUseSelection.mockReturnValue({ selectedId: 'req-1' });
+    mockUseServiceRequest.mockReturnValue({ data: null, isLoading: false, isError: true });
+    render(<NotesWidget />);
+    expect(screen.getByText('Failed to load request.')).toBeInTheDocument();
   });
 
   it('shows title and description when request is loaded with a description', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type ReactNode, createElement } from 'react';
 import { useServiceRequests, useTopPending, useServiceRequest } from './useServiceRequests';
@@ -32,6 +32,13 @@ describe('useServiceRequests', () => {
     const keys = queryClient.getQueryCache().getAll().map(q => q.queryKey);
     expect(keys).toContainEqual(['service-requests']);
   });
+
+  it('calls getServiceRequests as its queryFn', async () => {
+    const { getServiceRequests } = vi.mocked(await import('../services/api'));
+    const { wrapper } = makeClientAndWrapper();
+    renderHook(() => useServiceRequests(), { wrapper });
+    await waitFor(() => expect(getServiceRequests).toHaveBeenCalled());
+  });
 });
 
 describe('useTopPending', () => {
@@ -40,6 +47,13 @@ describe('useTopPending', () => {
     renderHook(() => useTopPending(), { wrapper });
     const keys = queryClient.getQueryCache().getAll().map(q => q.queryKey);
     expect(keys).toContainEqual(['service-requests', 'top-pending']);
+  });
+
+  it('calls getTopPending as its queryFn', async () => {
+    const { getTopPending } = vi.mocked(await import('../services/api'));
+    const { wrapper } = makeClientAndWrapper();
+    renderHook(() => useTopPending(), { wrapper });
+    await waitFor(() => expect(getTopPending).toHaveBeenCalled());
   });
 });
 
@@ -52,12 +66,11 @@ describe('useServiceRequest', () => {
     expect(getServiceRequest).not.toHaveBeenCalled();
   });
 
-  it('has enabled: true when id is a string (query fires)', async () => {
+  it('calls getServiceRequest with the id when id is a string', async () => {
     const { getServiceRequest } = vi.mocked(await import('../services/api'));
     const { wrapper } = makeClientAndWrapper();
-    const { result } = renderHook(() => useServiceRequest('some-id'), { wrapper });
-    expect(result.current.fetchStatus).not.toBe('idle');
-    expect(getServiceRequest).toHaveBeenCalledWith('some-id');
+    renderHook(() => useServiceRequest('some-id'), { wrapper });
+    await waitFor(() => expect(getServiceRequest).toHaveBeenCalledWith('some-id'));
   });
 });
   

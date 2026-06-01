@@ -5,7 +5,7 @@ import { useSelection } from '../../context/SelectionContext';
 
 export function NotesWidget() {
   const { selectedId } = useSelection();
-  const { data: request, isLoading } = useServiceRequest(selectedId);
+  const { data: request, isLoading, isError } = useServiceRequest(selectedId);
 
   return (
     <Paper sx={{ p: 2, height: '100%' }}>
@@ -18,6 +18,8 @@ export function NotesWidget() {
         </Box>
       ) : isLoading ? (
         <Typography variant="body2" color="text.secondary">Loading...</Typography>
+      ) : isError ? (
+        <Typography variant="body2" color="error">Failed to load request.</Typography>
       ) : request ? (
         <Box>
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }} gutterBottom>

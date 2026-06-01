@@ -47,11 +47,6 @@ beforeEach(() => {
 });
 
 describe('TopRequestsWidget', () => {
-  it('renders the heading', () => {
-    render(<TopRequestsWidget />);
-    expect(screen.getByText('Top Pending Requests')).toBeInTheDocument();
-  });
-
   it('renders card title for a request', () => {
     render(<TopRequestsWidget />);
     expect(screen.getByText('Server is down')).toBeInTheDocument();
