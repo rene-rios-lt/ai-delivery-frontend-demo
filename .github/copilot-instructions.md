@@ -13,6 +13,9 @@ npm run dev
 # Type-check + build — no standalone typecheck script; tsc runs as part of build
 npm run build
 
+# Type-check only (no output files, faster than build)
+npm run typecheck
+
 # Lint
 npm run lint
 
@@ -29,7 +32,7 @@ npx vitest run -t "clicking a TopRequestsWidget card"
 npx vitest run --coverage
 ```
 
-> **There is no `npm run test` or `npm run typecheck` script.** `npm run test` will fail. Use `npx vitest run` and `npm run build` respectively.
+> **There is no `npm run test` script.** `npm run test` will fail. Use `npx vitest run` for tests and `npm run typecheck` for type checking.
 
 Copy `.env.example` to `.env` and set `VITE_API_BASE_URL` (defaults to `http://localhost:5000`).
 
