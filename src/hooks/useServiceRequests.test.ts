@@ -11,13 +11,14 @@ vi.mock('../services/api', () => ({
   getServiceRequest: vi.fn().mockResolvedValue(null),
 }));
 
-function makeWrapper() {
+function makeClientAndWrapper() {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  return function Wrapper({ children }: { children: ReactNode }) {
+  const wrapper = function Wrapper({ children }: { children: ReactNode }) {
     return createElement(QueryClientProvider, { client: queryClient }, children);
   };
+  return { queryClient, wrapper };
 }
 
 beforeEach(() => {
@@ -25,37 +26,38 @@ beforeEach(() => {
 });
 
 describe('useServiceRequests', () => {
-  it('uses query key ["service-requests"]', () => {
-    const { result } = renderHook(() => useServiceRequests(), { wrapper: makeWrapper() });
-    // TanStack Query v5 exposes the query key in the query result options
-    // We verify this indirectly: the hook resolves without error and returns the expected shape
-    expect(result.current).toHaveProperty('data');
-    expect(result.current).toHaveProperty('isLoading');
-    expect(result.current).toHaveProperty('isError');
+  it('registers a query with key ["service-requests"]', () => {
+    const { queryClient, wrapper } = makeClientAndWrapper();
+    renderHook(() => useServiceRequests(), { wrapper });
+    const keys = queryClient.getQueryCache().getAll().map(q => q.queryKey);
+    expect(keys).toContainEqual(['service-requests']);
   });
 });
 
 describe('useTopPending', () => {
-  it('uses query key ["service-requests", "top-pending"]', () => {
-    const { result } = renderHook(() => useTopPending(), { wrapper: makeWrapper() });
-    expect(result.current).toHaveProperty('data');
-    expect(result.current).toHaveProperty('isLoading');
-    expect(result.current).toHaveProperty('isError');
+  it('registers a query with key ["service-requests", "top-pending"]', () => {
+    const { queryClient, wrapper } = makeClientAndWrapper();
+    renderHook(() => useTopPending(), { wrapper });
+    const keys = queryClient.getQueryCache().getAll().map(q => q.queryKey);
+    expect(keys).toContainEqual(['service-requests', 'top-pending']);
   });
 });
 
 describe('useServiceRequest', () => {
   it('has enabled: false when id is null (query does not fire)', async () => {
     const { getServiceRequest } = vi.mocked(await import('../services/api'));
-    const { result } = renderHook(() => useServiceRequest(null), { wrapper: makeWrapper() });
+    const { wrapper } = makeClientAndWrapper();
+    const { result } = renderHook(() => useServiceRequest(null), { wrapper });
     expect(result.current.fetchStatus).toBe('idle');
     expect(getServiceRequest).not.toHaveBeenCalled();
   });
 
   it('has enabled: true when id is a string (query fires)', async () => {
     const { getServiceRequest } = vi.mocked(await import('../services/api'));
-    const { result } = renderHook(() => useServiceRequest('some-id'), { wrapper: makeWrapper() });
+    const { wrapper } = makeClientAndWrapper();
+    const { result } = renderHook(() => useServiceRequest('some-id'), { wrapper });
     expect(result.current.fetchStatus).not.toBe('idle');
     expect(getServiceRequest).toHaveBeenCalledWith('some-id');
   });
 });
+  

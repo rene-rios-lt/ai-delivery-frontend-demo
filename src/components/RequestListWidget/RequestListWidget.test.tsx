@@ -47,16 +47,11 @@ describe('RequestListWidget', () => {
     expect(screen.getByText('Bob')).toBeInTheDocument();
   });
 
-  it('passes loading={true} to DataGrid when isLoading is true', () => {
+  it('hides grid content when isLoading is true', () => {
     mockUseServiceRequests.mockReturnValue({ data: [], isLoading: true, isError: false });
-    render(<RequestListWidget />);
-    // The MUI DataGrid renders a loading overlay when loading={true}
-    // aria-label "Loading" is added to the overlay by MUI DataGrid
-    const grid = document.querySelector('[role="progressbar"], .MuiDataGrid-loadingOverlay, [aria-label="Loading"]');
-    // Alternatively check that no data rows are rendered but the grid itself is present
-    expect(screen.getByText('All Requests')).toBeInTheDocument();
-    // The grid container should still be in the DOM
-    expect(document.querySelector('.MuiDataGrid-root')).toBeInTheDocument();
+    const { container } = render(<RequestListWidget />);
+    // MUI DataGrid v9 adds this class when loading={true} to hide content before skeleton rows render
+    expect(container.querySelector('.MuiDataGrid-main--hiddenContent')).toBeInTheDocument();
   });
 
   it('renders error message when isError is true', () => {
