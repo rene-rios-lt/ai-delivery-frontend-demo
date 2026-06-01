@@ -10,14 +10,17 @@ React 19 / TypeScript / Vite single-page dashboard. MUI v9 component library. Ta
 # Dev server (defaults to http://localhost:5173)
 npm run dev
 
-# Type-check + build — no standalone typecheck script; tsc runs as part of build
-npm run build
-
 # Type-check only (no output files, faster than build)
 npm run typecheck
 
+# Type-check + build
+npm run build
+
 # Lint
 npm run lint
+
+# Full validation suite (typecheck → lint → tests)
+npm run validate
 
 # Run all tests
 npx vitest run
@@ -28,11 +31,11 @@ npx vitest run src/hooks/useServiceRequests.test.ts
 # Run a single test by name pattern
 npx vitest run -t "clicking a TopRequestsWidget card"
 
-# Run tests with coverage (no pre-configured script; run manually)
+# Run tests with coverage
 npx vitest run --coverage
 ```
 
-> **There is no `npm run test` script.** `npm run test` will fail. Use `npx vitest run` for tests and `npm run typecheck` for type checking.
+> **There is no `npm run test` script.** `npm run test` will fail. Use `npx vitest run` for tests, `npm run typecheck` for type checking, or `npm run validate` for the full local validation suite (typecheck + lint + tests).
 
 Copy `.env.example` to `.env` and set `VITE_API_BASE_URL` (defaults to `http://localhost:5000`).
 
