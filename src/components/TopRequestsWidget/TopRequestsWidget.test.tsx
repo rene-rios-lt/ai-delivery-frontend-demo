@@ -85,4 +85,12 @@ describe('TopRequestsWidget', () => {
     render(<TopRequestsWidget />);
     expect(screen.getByText('Carol → Dave')).toBeInTheDocument();
   });
+
+  it('renders a status chip on each card', () => {
+    render(<TopRequestsWidget />);
+    const openChip = screen.getByText('Open').closest('.MuiChip-root');
+    expect(openChip).toHaveClass('MuiChip-colorPrimary');
+    const inProgressChip = screen.getByText('InProgress').closest('.MuiChip-root');
+    expect(inProgressChip).toHaveClass('MuiChip-colorWarning');
+  });
 });

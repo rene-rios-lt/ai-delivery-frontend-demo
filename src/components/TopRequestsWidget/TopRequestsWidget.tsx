@@ -1,6 +1,7 @@
 import { Card, CardActionArea, CardContent, Stack, Typography, Box, Skeleton } from '@mui/material';
 import { useTopPending } from '../../hooks/useServiceRequests';
 import { useSelection } from '../../context/SelectionContext';
+import { StatusChip } from '../StatusChip/StatusChip';
 
 export function TopRequestsWidget() {
   const { data = [], isLoading, isError } = useTopPending();
@@ -32,6 +33,9 @@ export function TopRequestsWidget() {
                     <Typography variant="caption" color="text.secondary">
                       {req.requesterName} → {req.requesteeName}
                     </Typography>
+                    <Box sx={{ mt: 0.5 }}>
+                      <StatusChip status={req.status} />
+                    </Box>
                   </CardContent>
                 </CardActionArea>
               </Card>
