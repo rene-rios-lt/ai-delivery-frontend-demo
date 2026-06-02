@@ -63,6 +63,29 @@ describe('cross-widget selection', () => {
     expect(screen.getByText('The production server needs a reboot.')).toBeInTheDocument();
   });
 
+  it('NotesWidget keeps showing details when the selected row is hidden by a filter', async () => {
+    const user = userEvent.setup();
+    render(
+      <SelectionProvider>
+        <RequestListWidget />
+        <NotesWidget />
+      </SelectionProvider>
+    );
+
+    // Select the row
+    const rows = screen.getAllByRole('row');
+    await user.click(rows[1]);
+    expect(screen.getByText('The production server needs a reboot.')).toBeInTheDocument();
+
+    // Filter hides the selected row — check the grid shows the empty state overlay
+    const input = screen.getByPlaceholderText('Search by title, requester, or requestee…');
+    await user.type(input, 'zzznomatch');
+    expect(screen.getByText('No requests match your search')).toBeInTheDocument();
+
+    // NotesWidget still shows the selected request's details
+    expect(screen.getByText('The production server needs a reboot.')).toBeInTheDocument();
+  });
+
   it('NotesWidget resets to placeholder when selection is cleared', async () => {
     const user = userEvent.setup();
     render(
