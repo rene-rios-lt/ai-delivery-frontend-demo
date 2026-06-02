@@ -15,6 +15,7 @@ const request: ServiceRequest = {
   requesterName: 'Alice',
   requesteeId: 'user-b',
   requesteeName: 'Bob',
+  status: 'Open',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 };

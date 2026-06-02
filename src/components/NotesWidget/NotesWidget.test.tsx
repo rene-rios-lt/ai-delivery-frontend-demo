@@ -16,6 +16,7 @@ const sampleRequest = {
   id: 'req-1',
   title: 'Fix the server',
   description: 'The server needs a reboot and config update.',
+  status: 'InProgress' as const,
   requesterName: 'Alice',
   requesteeName: 'Bob',
   createdAt: '2024-01-01T00:00:00Z',

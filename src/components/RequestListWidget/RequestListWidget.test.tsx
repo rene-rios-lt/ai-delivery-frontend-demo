@@ -21,6 +21,7 @@ const sampleRow = {
   title: 'Fix the printer',
   requesterName: 'Alice',
   requesteeName: 'Bob',
+  status: 'Open' as const,
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
   description: null,
