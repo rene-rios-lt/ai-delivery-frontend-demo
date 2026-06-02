@@ -175,8 +175,7 @@ describe('RequestListWidget', () => {
       render(<RequestListWidget />);
       const input = screen.getByPlaceholderText('Search by title, requester, or requestee…');
 
-      // Type a term that matches only sampleRow's title in a partial way — wait, we need
-      // to hide sampleRow. Type 'outage' to match only secondRow, hiding sampleRow (id='1').
+      // 'outage' matches only secondRow, hiding sampleRow (id='1')
       await user.type(input, 'outage');
 
       // sampleRow (id='1') is hidden from the grid, but setSelectedId must NOT have been called
