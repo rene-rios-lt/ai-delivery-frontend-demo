@@ -79,4 +79,11 @@ describe('RequestListWidget', () => {
     const dataRow = rows[1];
     expect(dataRow).toHaveAttribute('aria-selected', 'true');
   });
+
+  it('renders a status chip in the grid row', () => {
+    render(<RequestListWidget />);
+    expect(screen.getByText('Open')).toBeInTheDocument();
+    const chip = screen.getByText('Open').closest('.MuiChip-root');
+    expect(chip).toHaveClass('MuiChip-colorPrimary');
+  });
 });
