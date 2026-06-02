@@ -2,6 +2,7 @@ import { Paper, Typography, Divider, Box } from '@mui/material';
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import { useServiceRequest } from '../../hooks/useServiceRequests';
 import { useSelection } from '../../context/SelectionContext';
+import { StatusChip } from '../StatusChip/StatusChip';
 
 export function NotesWidget() {
   const { selectedId } = useSelection();
@@ -25,6 +26,9 @@ export function NotesWidget() {
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }} gutterBottom>
             {request.title}
           </Typography>
+          <Box sx={{ mb: 1 }}>
+            <StatusChip status={request.status} />
+          </Box>
           <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'pre-wrap' }}>
             {request.description ?? 'No description provided.'}
           </Typography>

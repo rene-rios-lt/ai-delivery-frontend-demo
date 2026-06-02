@@ -59,6 +59,15 @@ describe('NotesWidget', () => {
     expect(screen.getByText('The server needs a reboot and config update.')).toBeInTheDocument();
   });
 
+  it('shows the status chip in the detail panel', () => {
+    mockUseSelection.mockReturnValue({ selectedId: 'req-1' });
+    mockUseServiceRequest.mockReturnValue({ data: sampleRequest, isLoading: false });
+    render(<NotesWidget />);
+    const chip = screen.getByText('InProgress').closest('.MuiChip-root');
+    expect(chip).toBeInTheDocument();
+    expect(chip).toHaveClass('MuiChip-colorWarning');
+  });
+
   it('shows "No description provided." when request has description: null', () => {
     mockUseSelection.mockReturnValue({ selectedId: 'req-1' });
     mockUseServiceRequest.mockReturnValue({
