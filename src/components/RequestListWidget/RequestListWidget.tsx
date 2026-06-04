@@ -20,6 +20,7 @@ export function RequestListWidget() {
   const { data = [], isLoading, isError } = useServiceRequests();
   const { selectedId, setSelectedId } = useSelection();
   const [filterText, setFilterText] = useState('');
+  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
 
   const activeFilter = filterText.trim().toLowerCase();
   const filteredRows = activeFilter
@@ -31,6 +32,11 @@ export function RequestListWidget() {
       )
     : data;
 
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterText(e.target.value);
+    setPaginationModel(prev => ({ ...prev, page: 0 }));
+  };
+
   return (
     <Paper sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Typography variant="h6" gutterBottom>All Requests</Typography>
@@ -39,7 +45,7 @@ export function RequestListWidget() {
         size="small"
         placeholder="Search by title, requester, or requestee…"
         value={filterText}
-        onChange={e => setFilterText(e.target.value)}
+        onChange={handleFilterChange}
         slotProps={{ htmlInput: { 'aria-label': 'Search requests' } }}
         sx={{ mb: 1 }}
         fullWidth
@@ -56,8 +62,9 @@ export function RequestListWidget() {
             { type: 'include', ids: new Set(selectedId ? [selectedId] : []) } as GridRowSelectionModel
           }
           onRowClick={(params: GridRowParams) => setSelectedId(params.id as string)}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
           pageSizeOptions={[10, 25]}
-          initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
           getRowId={row => row.id}
           sx={{ border: 0 }}
         />

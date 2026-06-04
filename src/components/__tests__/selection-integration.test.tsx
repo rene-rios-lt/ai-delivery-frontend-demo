@@ -80,4 +80,31 @@ describe('cross-widget selection', () => {
     // This documents the current behavior explicitly
     expect(screen.queryByText('Select a request to view its notes')).not.toBeInTheDocument();
   });
+
+  it('filter hides selected row but Notes panel keeps showing its details (AC6)', async () => {
+    const user = userEvent.setup();
+    render(
+      <SelectionProvider>
+        <RequestListWidget />
+        <NotesWidget />
+      </SelectionProvider>
+    );
+
+    // Select the request by clicking its row
+    const rows = screen.getAllByRole('row');
+    await user.click(rows[1]);
+    expect(screen.getByText('The production server needs a reboot.')).toBeInTheDocument();
+
+    // Type a filter that hides all rows
+    await user.type(
+      screen.getByPlaceholderText('Search by title, requester, or requestee…'),
+      'xyz-no-match'
+    );
+
+    // Grid shows empty filter message — selected row is gone from the list
+    expect(screen.getByText('No requests match your search')).toBeInTheDocument();
+
+    // Notes panel still shows the selected request's details — selection was not cleared
+    expect(screen.getByText('The production server needs a reboot.')).toBeInTheDocument();
+  });
 });
