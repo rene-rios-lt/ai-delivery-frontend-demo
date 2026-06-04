@@ -21,6 +21,16 @@ export function RequestListWidget() {
   const { selectedId, setSelectedId } = useSelection();
   const [filterText, setFilterText] = useState('');
 
+  const activeFilter = filterText.trim().toLowerCase();
+  const filteredRows = activeFilter
+    ? data.filter(
+        r =>
+          r.title.toLowerCase().includes(activeFilter) ||
+          r.requesterName.toLowerCase().includes(activeFilter) ||
+          r.requesteeName.toLowerCase().includes(activeFilter)
+      )
+    : data;
+
   return (
     <Paper sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Typography variant="h6" gutterBottom>All Requests</Typography>
@@ -36,9 +46,12 @@ export function RequestListWidget() {
       />
       <Box sx={{ flexGrow: 1 }}>
         <DataGrid
-          rows={data}
+          rows={filteredRows}
           columns={columns}
           loading={isLoading}
+          localeText={{
+            noRowsLabel: activeFilter ? 'No requests match your search' : 'No rows',
+          }}
           rowSelectionModel={
             { type: 'include', ids: new Set(selectedId ? [selectedId] : []) } as GridRowSelectionModel
           }
