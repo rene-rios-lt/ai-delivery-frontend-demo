@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { DataGrid, type GridColDef, type GridRowParams, type GridRowSelectionModel } from '@mui/x-data-grid';
 import { Paper, Typography, Box, TextField } from '@mui/material';
 import { useServiceRequests } from '../../hooks/useServiceRequests';
@@ -32,7 +32,7 @@ export function RequestListWidget() {
       )
     : data;
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFilterText(e.target.value);
     setPaginationModel(prev => ({ ...prev, page: 0 }));
   };
