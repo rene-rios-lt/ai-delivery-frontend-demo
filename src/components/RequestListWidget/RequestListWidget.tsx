@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { DataGrid, type GridColDef, type GridRowParams, type GridRowSelectionModel } from '@mui/x-data-grid';
-import { Paper, Typography, Box } from '@mui/material';
+import { Paper, Typography, Box, TextField } from '@mui/material';
 import { useServiceRequests } from '../../hooks/useServiceRequests';
 import { useSelection } from '../../context/SelectionContext';
 
@@ -18,11 +19,21 @@ const columns: GridColDef[] = [
 export function RequestListWidget() {
   const { data = [], isLoading, isError } = useServiceRequests();
   const { selectedId, setSelectedId } = useSelection();
+  const [filterText, setFilterText] = useState('');
 
   return (
     <Paper sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Typography variant="h6" gutterBottom>All Requests</Typography>
       {isError && <Typography color="error">Failed to load requests.</Typography>}
+      <TextField
+        size="small"
+        placeholder="Search by title, requester, or requestee…"
+        value={filterText}
+        onChange={e => setFilterText(e.target.value)}
+        slotProps={{ htmlInput: { 'aria-label': 'Search requests' } }}
+        sx={{ mb: 1 }}
+        fullWidth
+      />
       <Box sx={{ flexGrow: 1 }}>
         <DataGrid
           rows={data}
