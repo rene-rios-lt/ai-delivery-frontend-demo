@@ -86,3 +86,75 @@ describe('RequestListWidget', () => {
     expect(dataRow).toHaveAttribute('aria-selected', 'true');
   });
 });
+
+const anotherRow = {
+  id: '2',
+  title: 'Server upgrade',
+  requesterName: 'Charlie',
+  requesteeName: 'Diana',
+  createdAt: '2024-01-02T00:00:00Z',
+  updatedAt: '2024-01-02T00:00:00Z',
+  description: null,
+  requesterId: 'c',
+  requesteeId: 'd',
+};
+
+describe('search filter behavior', () => {
+  beforeEach(() => {
+    mockUseServiceRequests.mockReturnValue({
+      data: [sampleRow, anotherRow],
+      isLoading: false,
+      isError: false,
+    });
+  });
+
+  it('typing filters rows by title (AC2, AC3)', async () => {
+    const user = userEvent.setup();
+    render(<RequestListWidget />);
+    await user.type(screen.getByPlaceholderText('Search by title, requester, or requestee…'), 'fix');
+    expect(screen.getByText('Fix the printer')).toBeInTheDocument();
+    expect(screen.queryByText('Server upgrade')).not.toBeInTheDocument();
+  });
+
+  it('filter is case-insensitive (AC3)', async () => {
+    const user = userEvent.setup();
+    render(<RequestListWidget />);
+    await user.type(screen.getByPlaceholderText('Search by title, requester, or requestee…'), 'FIX');
+    expect(screen.getByText('Fix the printer')).toBeInTheDocument();
+    expect(screen.queryByText('Server upgrade')).not.toBeInTheDocument();
+  });
+
+  it('filters by requesterName (AC3)', async () => {
+    const user = userEvent.setup();
+    render(<RequestListWidget />);
+    await user.type(screen.getByPlaceholderText('Search by title, requester, or requestee…'), 'charlie');
+    expect(screen.getByText('Server upgrade')).toBeInTheDocument();
+    expect(screen.queryByText('Fix the printer')).not.toBeInTheDocument();
+  });
+
+  it('filters by requesteeName (AC3)', async () => {
+    const user = userEvent.setup();
+    render(<RequestListWidget />);
+    await user.type(screen.getByPlaceholderText('Search by title, requester, or requestee…'), 'diana');
+    expect(screen.getByText('Server upgrade')).toBeInTheDocument();
+    expect(screen.queryByText('Fix the printer')).not.toBeInTheDocument();
+  });
+
+  it('shows "No requests match your search" when nothing matches (AC4)', async () => {
+    const user = userEvent.setup();
+    render(<RequestListWidget />);
+    await user.type(screen.getByPlaceholderText('Search by title, requester, or requestee…'), 'zzz');
+    expect(screen.getByText('No requests match your search')).toBeInTheDocument();
+  });
+
+  it('clearing the filter restores all rows (AC5)', async () => {
+    const user = userEvent.setup();
+    render(<RequestListWidget />);
+    const input = screen.getByPlaceholderText('Search by title, requester, or requestee…');
+    await user.type(input, 'fix');
+    expect(screen.queryByText('Server upgrade')).not.toBeInTheDocument();
+    await user.clear(input);
+    expect(screen.getByText('Fix the printer')).toBeInTheDocument();
+    expect(screen.getByText('Server upgrade')).toBeInTheDocument();
+  });
+});
