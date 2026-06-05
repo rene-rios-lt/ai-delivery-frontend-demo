@@ -158,3 +158,40 @@ describe('search filter behavior', () => {
     expect(screen.getByText('Server upgrade')).toBeInTheDocument();
   });
 });
+
+describe('pagination reset on filter change', () => {
+  it('resets to page 1 when filter is changed while on page 2 (pagination note)', async () => {
+    // 25 rows all matching "alpha" — filter doesn't reduce count, so going back to
+    // page 1 after typing can only be caused by an explicit pagination reset.
+    const rows25 = Array.from({ length: 25 }, (_, i) => ({
+      id: String(i + 1),
+      title: `Alpha row ${i + 1}`,
+      requesterName: 'Alice',
+      requesteeName: 'Bob',
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      description: null,
+      requesterId: 'a',
+      requesteeId: 'b',
+    }));
+    mockUseServiceRequests.mockReturnValue({ data: rows25, isLoading: false, isError: false });
+
+    const user = userEvent.setup();
+    render(<RequestListWidget />);
+
+    // Navigate to page 2 — row 1 not visible, row 11 is
+    await user.click(screen.getByRole('button', { name: /go to next page/i }));
+    expect(screen.getByText('Alpha row 11')).toBeInTheDocument();
+    expect(screen.queryByText('Alpha row 1')).not.toBeInTheDocument();
+
+    // Type a filter — all rows still match, but page must reset to 1
+    await user.type(
+      screen.getByPlaceholderText('Search by title, requester, or requestee…'),
+      'alpha'
+    );
+
+    // Page 1 visible: row 1 present, row 11 not on page 1
+    expect(screen.getByText('Alpha row 1')).toBeInTheDocument();
+    expect(screen.queryByText('Alpha row 11')).not.toBeInTheDocument();
+  });
+});

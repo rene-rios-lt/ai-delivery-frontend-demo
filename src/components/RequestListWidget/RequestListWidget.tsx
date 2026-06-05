@@ -20,6 +20,7 @@ export function RequestListWidget() {
   const { data = [], isLoading, isError } = useServiceRequests();
   const { selectedId, setSelectedId } = useSelection();
   const [filterText, setFilterText] = useState('');
+  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
 
   const activeFilter = filterText.trim().toLowerCase();
   const filteredRows = activeFilter
@@ -33,6 +34,7 @@ export function RequestListWidget() {
 
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFilterText(e.target.value);
+    setPaginationModel(prev => ({ ...prev, page: 0 }));
   };
 
   return (
@@ -60,8 +62,9 @@ export function RequestListWidget() {
             { type: 'include', ids: new Set(selectedId ? [selectedId] : []) } as GridRowSelectionModel
           }
           onRowClick={(params: GridRowParams) => setSelectedId(params.id as string)}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
           pageSizeOptions={[10, 25]}
-          initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
           getRowId={row => row.id}
           sx={{ border: 0 }}
         />
