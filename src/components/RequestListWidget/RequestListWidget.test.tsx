@@ -35,6 +35,13 @@ beforeEach(() => {
 });
 
 describe('RequestListWidget', () => {
+  it('renders a search input with the correct placeholder', () => {
+    render(<RequestListWidget />);
+    expect(
+      screen.getByPlaceholderText('Search by title, requester, or requestee…')
+    ).toBeInTheDocument();
+  });
+
   it('renders the widget heading', () => {
     render(<RequestListWidget />);
     expect(screen.getByText('All Requests')).toBeInTheDocument();
